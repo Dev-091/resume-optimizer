@@ -25,12 +25,16 @@ st.markdown("""
 Powered by Groq (Llama 3.1) • 100% Free
 """)
 
-# Load Groq API Key from api_key.txt directly
+# Load API key locally from file, or from Streamlit Secrets in Cloud
+groq_api_key = ""
 try:
     with open("api_key.txt", "r") as f:
         groq_api_key = f.read().strip()
 except Exception:
-    groq_api_key = ""
+    pass
+
+if not groq_api_key and "GROQ_API_KEY" in st.secrets:
+    groq_api_key = st.secrets["GROQ_API_KEY"]
 
 # Sidebar
 with st.sidebar:
