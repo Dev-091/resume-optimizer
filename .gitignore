@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+*.pdf
+temp_*
+.DS_Store
+api_key.txt

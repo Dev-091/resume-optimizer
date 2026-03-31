@@ -1,0 +1,9 @@
+streamlit
+pdfplumber
+fpdf2
+requests
+PyGithub
+groq
+pdf2docx
+python-docx
+docx2pdf
