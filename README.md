@@ -68,6 +68,3 @@ Unlike other resume builders, it **preserves your original formatting** by using
 - PDF Processing: `pdfplumber`, `fpdf2`
 - Document Conversion: `python-docx`, `pdf2docx`, `docx2pdf`
 - APIs: GitHub REST API
-
-## 📝 License
-This project is open-source and available to use free of charge. Built By Dev Sharma❤️ 
