@@ -296,6 +296,6 @@ if st.button("🚀 Generate Optimized Resume", key="optimize"):
 st.divider()
 st.markdown("""
 <center>
-Built with ❤️ using Streamlit + Groq + Python
+Built By Dev Sharma❤️ 
 </center>
 """, unsafe_allow_html=True)
