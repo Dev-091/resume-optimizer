@@ -8,8 +8,9 @@ from modules.parser import extract_text, structure_resume
 from modules.analyzer import analyze_jd
 from modules.github_scan import scan_github
 from modules.truth_engine import TruthEngine
-from modules.optimizer import optimize_content, calculate_match_score
+from modules.optimizer import optimize_content
 from modules.pdf_gen import PDFGenerator
+from modules.accuracy_meter import AccuracyMeter
 
 # Page Configuration
 st.set_page_config(
@@ -138,10 +139,6 @@ if st.button("🚀 Generate Optimized Resume", key="optimize"):
                 
                 truth_engine = TruthEngine(original_skills, github_skills)
                 
-                # Calculate Match Score
-                jd_required = st.session_state.jd_data.get('required_skills', [])
-                before_score = calculate_match_score(original_skills, jd_required)
-                
                 # Optimize Sections
                 optimized_summary = optimize_content(
                     st.session_state.resume_data.get('professional_summary', ''),
@@ -157,8 +154,22 @@ if st.button("🚀 Generate Optimized Resume", key="optimize"):
                     client
                 )
                 
+                # Calculate Match Score using new Accuracy Meter
+                accuracy_meter = AccuracyMeter(client)
+                
                 # After optimization score (estimated)
-                after_score = min(before_score + 20, 100)
+                after_data = {
+                    'summary': optimized_summary,
+                    'experience': optimized_experience,
+                    'skills': truth_engine.get_allowed_list()
+                }
+                
+                accuracy_results = accuracy_meter.get_comprehensive_score(
+                    after_data, 
+                    st.session_state.jd_data, 
+                    truth_engine.get_allowed_list(), # Verified
+                    jd_input
+                )
                 
                 # Store optimized data
                 st.session_state.optimized_data = {
@@ -166,21 +177,38 @@ if st.button("🚀 Generate Optimized Resume", key="optimize"):
                     'experience': optimized_experience,
                     'skills': truth_engine.get_allowed_list(),
                     'education': st.session_state.resume_data.get('education', []),
-                    'projects': st.session_state.resume_data.get('projects', [])
+                    'projects': st.session_state.resume_data.get('projects', []),
+                    'accuracy': accuracy_results
                 }
                 
                 # Show Results
                 st.success("✅ Resume optimized successfully!")
                 
-                # Display Report
-                st.subheader("📊 ATS Optimization Report")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("Before Score", f"{before_score}%")
-                with col2:
-                    st.metric("After Score", f"{after_score}%")
-                with col3:
-                    st.metric("Improvement", f"+{after_score - before_score}%")
+                # Display Accuracy Meter
+                st.subheader("🎯 Agent Accuracy Meter")
+                
+                # Main Score with Gauge (Simulated with progress bar and metric)
+                col_score, col_meter = st.columns([1, 2])
+                with col_score:
+                    st.metric("Overall Accuracy", f"{accuracy_results['overall_accuracy']}%")
+                with col_meter:
+                    # Color based on score
+                    color = "green" if accuracy_results['overall_accuracy'] > 80 else "orange" if accuracy_results['overall_accuracy'] > 60 else "red"
+                    st.progress(accuracy_results['overall_accuracy'] / 100)
+                    st.markdown(f"<p style='color:{color}; font-weight:bold;'>Performance: {'Excellent' if accuracy_results['overall_accuracy'] > 80 else 'Good' if accuracy_results['overall_accuracy'] > 60 else 'Needs Improvement'}</p>", unsafe_allow_html=True)
+
+                st.subheader("📊 Optimization Breakdown")
+                breakdown_cols = st.columns(3)
+                with breakdown_cols[0]:
+                    st.metric("JD Alignment", f"{accuracy_results['jd_match_score']}%")
+                with breakdown_cols[1]:
+                    st.metric("Truth Integrity", f"{accuracy_results['truth_integrity_score']}%")
+                with breakdown_cols[2]:
+                    st.metric("AI Quality Audit", f"{accuracy_results['overall_accuracy']}%") # Overall derived from audit
+                
+                # Detailed breakdown
+                with st.expander("View Quality Audit Details"):
+                    st.write(accuracy_results['breakdown'])
                 
                 # Truth Verification Report
                 st.subheader("🛡️ Truth Verification")

@@ -44,17 +44,16 @@ def optimize_docx_resume(pdf_bytes, ats_keywords, allowed_skills, client):
             return old_text
             
         prompt = f"""
-        You are an ATS formatting tool. Below is a block of text from a candidate's resume (could be a summary or an experience bullet point).
+        You are an expert ATS optimization engine. Your goal is to rewrite the following block of text from a resume to maximize its ATS score while preserving the user's original layout and formatting.
         
-        Your task is to rewrite ONLY this text block to naturally incorporate as many of these ATS Keywords and Verified Skills as appropriate:
-        ATS Keywords: {', '.join(ats_keywords[:15])}
-        Verified Skills: {', '.join(allowed_skills[:15])}
-        
-        Rules:
-        1. Keep the exact same tone and perspective. Do not write a cover letter.
-        2. DO NOT add markdown, quotes ("), explanations, or introductory text. Return JUST the final rewritten text.
-        3. DO NOT add leading bullet characters (like '-' or '*') UNLESS the original text explicitly starts with one.
-        4. If this block doesn't seem like an experience description or summary, return it EXACTLY as is without changes.
+        CRITICAL RULES:
+        1. CONTENT: Rewrite the text to naturally include:
+           ATS Keywords: {', '.join(ats_keywords[:15])}
+           Verified Skills: {', '.join(allowed_skills[:15])}
+        2. STRUCTURE: Return ONLY the rewritten text. NO markdown (no **, no bullet points unless they were original), NO quotes, NO conversational filler.
+        3. CONTEXT: If this is a header, company name, or date range, return it EXACTLY as provided. 
+        4. BULLETS: If the original text starts with a bullet character (•, -, *), ensure the rewritten text starts with the SAME character. 
+        5. LENGTH: Keep the character count within +/- 15% of the original to maintain the document's layout.
         
         Original Text:
         {old_text}

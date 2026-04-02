@@ -9,21 +9,22 @@ def optimize_content(section_text, jd_keywords, allowed_skills, client):
     keywords_str = ", ".join(jd_keywords[:15]) if jd_keywords else "none"
     
     prompt = f"""
-    Rewrite and optimize this resume section to match the job description.
+    You are a professional resume writer and ATS specialist. Your task is to rewrite the provided resume section to align perfectly with the target Job Description while remaining 100% truthful.
     
     CRITICAL CONSTRAINTS:
-    1. Use ONLY these verified skills: {allowed_skills_str}
-    2. Do NOT invent new jobs, companies, titles, or certifications
-    3. Do NOT add false achievements or metrics
-    4. Incorporate these ATS keywords naturally: {keywords_str}
-    5. Use strong action verbs (Engineered, Developed, Implemented, etc.)
-    6. Make bullet points measurable where possible
-    7. Keep all claims truthful and verifiable
+    1. EXCLUSIVITY: Use ONLY these verified skills: {allowed_skills_str}
+    2. HONESTY: Do NOT invent new jobs, companies, titles, or certifications.
+    3. ATS OPTIMIZATION: Naturalistically incorporate these high-impact keywords: {keywords_str}
+    4. ACTION ORIENTATION: Start each bullet point with strong, varied action verbs (e.g., 'Spearheaded', 'Optimized', 'Architected').
+    5. QUANTIFICATION: Include metrics and results where possible (e.g., 'Reduced latency by 30%', 'Managed team of 10').
+    6. LENGTH PRESERVATION: Maintain a similar word count to the original to prevent layout disruption.
+    7. TONE: Maintain a professional, executive-level tone.
     
     Original Content:
     {section_text[:5000]}
     
-    Return the optimized content only. No explanations.
+    RESPONSE FORMAT:
+    Return ONLY the optimized content. No explanations, no introductory text, no markdown headers.
     """
     
     try:
